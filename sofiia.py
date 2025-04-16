@@ -21,7 +21,7 @@ def run_sofiia_questions(data):
         .filter(col("primaryProfession").isNotNull()) \
         .withColumn("profession", explode(split("primaryProfession", ",")))
 
-    print('='*50 + '\n')
+    print('\n')
     # Питання 1– Актори з найбільшою кількістю фільмів
     # filter, join, groupBy
     movies = df_title_basics.filter(col("titleType") == "movie").select("tconst")
@@ -37,7 +37,7 @@ def run_sofiia_questions(data):
     print("1. Актори з найбільшою кількістю фільмів:")
     most_active_actors.show(20)
     print(f"Кількість рядків результуючої таблиці: {most_active_actors.count()}")
-    print('\n' + '=' * 50+ '\n')
+    print('\n' + '=' * 86+ '\n')
     # Питання 2 – Кількість фільмів жанрів по роках
     # filter, groupBy
     genre_years = df_title_basics \
@@ -50,7 +50,7 @@ def run_sofiia_questions(data):
     print("2. Кількість фільмів усіх жанрів по роках")
     genre_years.show(20)
     print(f"Кількість рядків результуючої таблиці: {genre_years.count()}")
-    print('\n' + '=' * 50+ '\n')
+    print('\n' + '=' * 86+ '\n')
     # Питання 3 – Регіони з найбільшою кількістю локалізацій
     # groupBy, filter
     top_regions = df_title_akas \
@@ -62,7 +62,7 @@ def run_sofiia_questions(data):
     print("3. Регіони з найбільшою кількістю локалізацій")
     top_regions.show(20)
     print(f"Кількість рядків результуючої таблиці: {top_regions.count()}")
-    print('\n' + '=' * 50+ '\n')
+    print('\n' + '=' * 86+ '\n')
     # Питання 4 – Серіали з найвищим середнім рейтингом (і середньою к-стю голосів > 1000)
     # join, filter, groupBy
     episodes_rated = df_title_episode.join(df_title_ratings, "tconst")
@@ -83,7 +83,7 @@ def run_sofiia_questions(data):
     print("4. Серіали з найвищим середнім рейтингом (і середньою к-стю голосів > 1000):")
     top_series.show(20, truncate=False)
     print(f"Кількість рядків результуючої таблиці: {top_series.count()}")
-    print('\n' + '=' * 50+ '\n')
+    print('\n' + '=' * 86+ '\n')
     # Питання 5 – Топ-5 фільмів у кожному жанрі (з кількістю голосів > 10000)
     # filter, join, window
     genre_rated = df_title_genres \
@@ -99,7 +99,7 @@ def run_sofiia_questions(data):
     print("5. Топ-5 фільмів у кожному жанрі (з кількістю голосів > 10000):")
     top5_per_genre.select("genre", "primaryTitle", "averageRating", "numVotes", "startYear").show(20, truncate=False)
     print(f"Кількість рядків результуючої таблиці: {top5_per_genre.count()}")
-    print('\n' + '=' * 50 + '\n')
+    print('\n' + '=' * 86 + '\n')
     # Питання 6 – Найраніший фільм у кожному жанрі з іменами режисерів
     # filter, window, join, groupBy
     genre_with_year = df_title_genres \
@@ -124,7 +124,7 @@ def run_sofiia_questions(data):
     print("6. Найраніший фільм у кожному жанрі з іменами режисерів:")
     earliest_per_genre_final_sorted.select("genre", "primaryTitle", "startYear", "directors").show(20, truncate=False)
     print(f"Кількість рядків результуючої таблиці: {earliest_per_genre_final_sorted.count()}")
-    print('\n' + '=' * 50)
+    print('\n' + '=' * 86)
 
     return {
         "most_active_actors": most_active_actors,
@@ -156,6 +156,6 @@ def save_sofiia_questions(results):
         .write.option("header", "true").csv("output/earliest_per_genre.csv", mode="overwrite")
 
 
-run_sofiia_questions(data)
+# run_sofiia_questions(data)
 # results = run_sofiia_questions(data)
 # save_sofiia_questions (results)
