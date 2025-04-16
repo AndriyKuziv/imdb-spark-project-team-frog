@@ -30,6 +30,7 @@ def run_maks_queries(dfs):
     result1 = result1.withColumnRenamed("primaryTitle", "filmName").withColumnRenamed("directors", "director_ids").withColumnRenamed("primaryName", "Names")
 
     result1.show(20)
+    print(f"Загальна кількість рядків: {result1.count()}")
 
     #Запит 2
     print(f'-' * 21 + 'Фільми, режисером яких є Benedict' + '-' * 21)
@@ -43,6 +44,9 @@ def run_maks_queries(dfs):
     result2 = result2.dropDuplicates(["director_ids"]) #без повторів
 
     result2.show(20)
+    print(f"Загальна кількість рядків: {result2.count()}")
+
+
 
     #Запит 3
     print(f'-' * 21 + 'Список людей, які прожили рівно 50 років і вмерли' + '-' * 21)
@@ -60,6 +64,7 @@ def run_maks_queries(dfs):
     )
 
     result3.show(20)
+    print(f"Загальна кількість рядків: {result3.count()}")
 
     #Запит 4
     print(f'-' * 21 + 'Різні поєднання груп професій, серед яких є Music_Department' + '-' * 21)
@@ -70,6 +75,7 @@ def run_maks_queries(dfs):
     result4 = result4.withColumnRenamed("primaryProfession", "containsMusic_Department").withColumnRenamed("names", "fullName")
 
     result4.show(truncate=False)
+    print(f"Загальна кількість рядків: {result4.count()}")
 
     #Запит 5
     print(f'-' * 21 + 'Групування фільмів по регіонам, з фільтром, щоб параметри були не Null, і ті, назви яких не були змінені (тобто isoriginaltitle=1)' + '-' * 21)
@@ -83,6 +89,7 @@ def run_maks_queries(dfs):
     result5 = result5.groupBy("language").agg(F.count("*").alias("original_title_count")).orderBy(F.desc("original_title_count"))
 
     result5.show(20)
+    print(f"Загальна кількість рядків: {result5.count()}")
 
     #Запит 6
     print(f'-' * 21 + 'Фільми, де numvotes>10000 і які вийшли у 2024' + '-' * 21)
@@ -96,4 +103,5 @@ def run_maks_queries(dfs):
     result6 = result6.sort(col("numVotes").desc())
 
     result6.show(20)
+    print(f"Загальна кількість рядків: {result6.count()}")
 
