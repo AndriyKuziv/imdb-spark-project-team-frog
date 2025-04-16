@@ -4,8 +4,11 @@ from pyspark.sql.types import *
 def load_data():
     spark = SparkSession.builder \
         .appName("IMDb Data Loader") \
+        .config("spark.executor.memory", "4g") \
+        .config("spark.driver.memory", "4g") \
         .getOrCreate()
     spark.conf.set("spark.sql.legacy.timeParserPolicy", "LEGACY")
+    spark.sparkContext.setLogLevel("ERROR")
 
     name_basics_schema = StructType([
         StructField("nconst", StringType(), True),
