@@ -15,6 +15,50 @@ for key, df in dfs.items():
 print("----------------------\n")
 
 ###
+name_basics = dfs["name_basics"]
+
+birth_counts = name_basics.filter((col("birthYear").isNotNull()) & (col("birthYear") >= 1800)) \
+    .groupBy("birthYear").count().orderBy("birthYear")
+
+birth_counts.show()
+
+data_for_plot = birth_counts.collect()
+
+birthYears = [row["birthYear"] for row in data_for_plot]
+counts = [row["count"] for row in data_for_plot]
+
+plt.figure(figsize=(10, 6))
+plt.bar(birthYears, counts, color="green")
+plt.xlabel("Birth years")
+plt.ylabel("Count")
+plt.title("Number of people born in different years")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+###
+title_basics = dfs["title_basics"]
+
+release_counts = title_basics.filter((col("startYear").isNotNull()) & (col("startYear") >= 1800)) \
+    .groupBy("startYear").count().orderBy("startYear")
+
+release_counts.show()
+
+data_for_plot = release_counts.collect()
+
+startYears = [row["startYear"] for row in data_for_plot]
+counts = [row["count"] for row in data_for_plot]
+
+plt.figure(figsize=(10, 6))
+plt.bar(startYears, counts, color="green")
+plt.xlabel("Release years")
+plt.ylabel("Count")
+plt.title("Number of titles released in different years")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+###
 title_basics = dfs["title_basics"]
 orig_movies = title_basics.filter(title_basics.titleType == "movie")
 print("----------------------")
