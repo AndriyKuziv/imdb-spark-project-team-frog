@@ -7,7 +7,7 @@ from andrii_queries import  run_andrii_queries
 dfs = load_data()
 print('='*86+'\n\t\t\t\t\t\tSOFIIA SUBTELNA BUSINESS QUESTIONS\n'+'='*86)
 run_sofiia_questions(dfs)
-print('='*86+'\n\t\t\t\t\t\tAndrii Kuziv BUSINESS QUESTIONS\n'+'='*86)
+print('='*86+'\n\t\t\t\t\t\tANDRII KUZIV BUSINESS QUESTIONS\n'+'='*86)
 run_andrii_queries()
 print('='*86+'\n\t\t\t\t\t\tMAKSYM PAVLISH BUSINESS QUESTIONS\n'+'='*86)
 run_maks_queries(dfs)
