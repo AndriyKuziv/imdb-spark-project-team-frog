@@ -101,6 +101,7 @@ def getCountriesLongestSeries():
         .orderBy(col("maxEpisodeNumber"), ascending=False)
 
     groupedByRegion.show(20, truncate=False)
+    print(f"Кількість регіонів, в яких виходив хоча б один серіал:", groupedByRegion.count())
 
 
 def getEpisodesWithRatingFrom(border_rating):
@@ -159,7 +160,7 @@ def getTitlesWithSameDirectorWriter():
     print("Кількість тайтлів, у яких одна людина виконує роль сценариста та режисера:", titles.count())
 
 
-def showAllQueries():
+def run_andrii_queries():
     getGermanRegionTitles()
     getGermanMoviesFromYear(2010)
     getTitlesWithSameDirectorWriter()
