@@ -1,7 +1,8 @@
 from load_data import load_data
 from pyspark.sql import functions as F
-from pyspark.sql.functions import col, when, row_number, expr
+from pyspark.sql.functions import col, when, row_number, expr, desc
 from pyspark.sql.window import Window
+from pyspark.sql.functions import percent_rank
 
 data = load_data()
 
@@ -10,9 +11,6 @@ df_title_akas = data['title_akas']
 df_title_basics = data['title_basics']
 df_title_crew = data['title_crew']
 df_title_ratings = data['title_ratings']
-
-window_spec = Window.partitionBy("tconst")
-
 
 def run_maks_queries(dfs):
 
@@ -31,8 +29,8 @@ def run_maks_queries(dfs):
 
     result1.show(20)
     print(f"Загальна кількість рядків: {result1.count()}")
-
-    #Запит 2
+#
+# #Запит 2
     print(f'-' * 21 + 'Фільми, режисером яких є Benedict' + '-' * 21)
 
     df_title_crew_temp = df_title_crew.filter(df_title_crew.directors.isNotNull())
@@ -41,32 +39,40 @@ def run_maks_queries(dfs):
     result2 = df_title_crew_temp.join(df_name_basics_temp, df_title_crew_temp.directors == df_name_basics_temp.nconst)
     result2 = result2.join(df_title_basics, result2.tconst == df_title_basics.tconst).select("primaryTitle", "directors", "primaryName")
     result2 = result2.withColumnRenamed("primaryTitle", "filmName").withColumnRenamed("directors", "director_ids").withColumnRenamed("primaryName", "Names")
-    result2 = result2.dropDuplicates(["director_ids"]) #без повторів
+    result2 = result2.dropDuplicates(["director_ids"])
 
     result2.show(20)
     print(f"Загальна кількість рядків: {result2.count()}")
 
 
 
-    #Запит 3
-    print(f'-' * 21 + 'Список людей, які прожили рівно 50 років і вмерли' + '-' * 21)
+#Запит 3
+    print(f'-' * 5 + 'Список людей, які прожили рівно 50 років і вмерли' + '-' * 5)
 
     result3 = df_name_basics.filter(col("birthYear").isNotNull() & col("deathYear").isNotNull())
 
     result3 = result3.withColumn("ageAtDeath", expr("deathYear - birthYear"))
     result3 = result3.filter(col("ageAtDeath") == 50)
 
+    windowSpec = Window.partitionBy("ageAtDeath").orderBy("deathYear")
+
+    result3 = result3.withColumn(
+        "death_rank",
+        row_number().over(windowSpec)
+    )
+
     result3 = result3.select(
         col("primaryName").alias("name"),
         col("birthYear").alias("birth"),
         col("deathYear").alias("Death"),
-        col("ageAtDeath")
+        col("ageAtDeath"),
+        col("death_rank")
     )
 
     result3.show(20)
     print(f"Загальна кількість рядків: {result3.count()}")
 
-    #Запит 4
+# #Запит 4
     print(f'-' * 21 + 'Різні поєднання груп професій, серед яких є Music_Department' + '-' * 21)
 
     result4 = df_name_basics.filter(df_name_basics.primaryProfession.contains("music_dep"))
@@ -91,8 +97,8 @@ def run_maks_queries(dfs):
     result5.show(20)
     print(f"Загальна кількість рядків: {result5.count()}")
 
-    #Запит 6
-    print(f'-' * 21 + 'Фільми, де numvotes>10000 і які вийшли у 2024' + '-' * 21)
+#Запит 6
+    print(f'-' * 3 + 'Фільми, де numvotes>10000 і які вийшли у 2024' + '-' * 3)
 
     result6 = df_title_basics.filter(df_title_basics.startYear == "2024")
     result6 = result6.join(df_title_ratings, "tconst")
@@ -102,6 +108,9 @@ def run_maks_queries(dfs):
 
     result6 = result6.sort(col("numVotes").desc())
 
-    result6.show(20)
-    print(f"Загальна кількість рядків: {result6.count()}")
+    window = Window.orderBy(desc("numVotes"))
+    result6 = result6.withColumn("top-20", row_number().over(window))
 
+    result6.show(20)
+
+    print(f"Загальна кількість рядків: {result6.count()}")
